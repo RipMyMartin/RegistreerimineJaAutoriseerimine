@@ -3,38 +3,40 @@ from MyModul import *
 kasutajad = []
 paroolid = []
 
+logPas = LoePasJaLog("autoriseerimine.txt")
 
-loe_autoriseerimine()
 while True:
-    print("\n0 - Registreerimine\n1 - Autoriseerimine\n2 - Nime või parooli muutmine\n3 - Unustatud parooli taastamine\n4 - Lõpetamine")
-    valik = input("Sisestage number: ")
+    print("\n0 - Registreerimine\n1 - Sisselogimine\n2 - Kasutajanime või parooli muutmine\n3 - Parooli taastamine\n4 - Väljumine")
+    valik = input("Sisestage valiku number: ")
     
     if valik == "4":
-        # Salvesta autoriseerimisandmed enne väljumist
-        salvesta_autoriseerimine()
+        # Salvestame autentimisandmed enne väljumist
+        kirjutaFailisse("autoriseerimine.txt", [f"{kasutajad[i]}:{paroolid[i]}" for i in range(len(kasutajad))])
         break
 
     kasutajanimi = input("Sisestage kasutajanimi: ")
 
     if valik == "0":
-        valik_parool = input("Kas soovite sisestada oma parooli (s) või lasta süsteemil genereerida parool (g)? ")
+        valik_parool = input("Kas soovite sisestada oma parooli (s) või genereerida süsteemi poolt (g)? ")
         if valik_parool.lower() == "s":
             parool = input("Sisestage parool: ")
         elif valik_parool.lower() == "g":
-            parool = salasona(12)
-        registreeri_kasutaja(kasutajanimi, parool, kasutajad, paroolid)
-        # Salvesta autoriseerimisandmed faili        
-        kirjutaFailisse("Autoriseerimine.txt", [f"{kasutajanimi}:{parool}"])
+            parool = salasona(5)
+            print("Genereeritud parool:", parool)
+        registreeriKasutaja(kasutajanimi, parool, kasutajad, paroolid)
+        kirjutaFailisse("autoriseerimine.txt", [f"{kasutajad[i]}:{paroolid[i]}" for i in range(len(kasutajad))])
+
 
     elif valik == "1":
         parool = input("Sisestage oma parool: ")
-        sisselogimine(kasutajanimi, parool, kasutajad, paroolid)
+        sisselogimine(kasutajanimi, parool, logPas, kasutajad, paroolid)
 
     elif valik == "2":
-        vana_parool = input("Sisestage vana parool: ")
-        uus_parool = input("Sisestage uus parool: ")
-        muuda_parool(kasutajanimi, vana_parool, uus_parool, kasutajad, paroolid)
+        vanaParool = input("Sisestage vana parool: ")
+        uusParool = input("Sisestage uus parool: ")
+        muudaParool(kasutajanimi, vanaParool, uusParool, kasutajad, paroolid)  
 
     elif valik == "3":
-        uus_parool = input("Sisestage uus parool: ")
-        unustatud_parool(kasutajanimi, uus_parool, kasutajad, paroolid)
+        uusParool = input("Sisestage uus parool: ")
+        receiver_email = input("Sisestage saaja e-posti aadress: ")
+        unustatudParool(kasutajanimi, uusParool, logPas, receiver_email)
